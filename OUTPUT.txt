@@ -1,0 +1,195 @@
+=== DFA validation tests === 
+VALIDATION ERROR: No states found in DFA EmptyDFA
+False
+VALIDATION ERROR: multiple transitions in state q1 with input b
+False
+
+
+=== DFA test 1 === 
+aba
+Transitioning from Q1 to Q2 using a
+Transitioning from Q2 to Q2 using b
+Transitioning from Q2 to Q1 using a
+Yes
+---
+abbba
+Transitioning from Q1 to Q2 using a
+Transitioning from Q2 to Q2 using b
+Transitioning from Q2 to Q2 using b
+Transitioning from Q2 to Q2 using b
+Transitioning from Q2 to Q1 using a
+Yes
+---
+aaaab
+Transitioning from Q1 to Q2 using a
+Transitioning from Q2 to Q1 using a
+Transitioning from Q1 to Q2 using a
+Transitioning from Q2 to Q1 using a
+Transitioning from Q1 to Q1 using b
+Yes
+
+
+=== DFA test 2 === 
+abca
+Transitioning from Q1 to Q1 using a
+Transitioning from Q1 to Q2 using b
+Transitioning from Q2 to Q3 using c
+Transitioning from Q3 to Q1 using a
+No
+---
+accbab
+Transitioning from Q1 to Q1 using a
+Transitioning from Q1 to Q3 using c
+Transitioning from Q3 to Q3 using c
+Transitioning from Q3 to Q2 using b
+Transitioning from Q2 to Q1 using a
+Transitioning from Q1 to Q2 using b
+No
+---
+QQQ
+ERROR! Invalid transition detected at Q1!
+Invalid character: Q
+No
+
+
+=== DFA test 3 === 
+abccd
+Transitioning from Q1 to Q1 using a
+Transitioning from Q1 to Q1 using b
+Transitioning from Q1 to Q2 using c
+Transitioning from Q2 to Q1 using c
+Transitioning from Q1 to Q3 using d
+No
+---
+cbdb
+Transitioning from Q1 to Q2 using c
+Transitioning from Q2 to Q2 using b
+Transitioning from Q2 to Q3 using d
+Transitioning from Q3 to Q4 using b
+Yes
+---
+abcd
+Transitioning from Q1 to Q1 using a
+Transitioning from Q1 to Q1 using b
+Transitioning from Q1 to Q2 using c
+Transitioning from Q2 to Q3 using d
+No
+
+
+=== NFA test 1 ===
+At:  Q1 Input:  caa
+At:  Q4 Input:  aa
+At:  Q3 Input:  aa
+At:  Q2 Input:  a
+At:  Q1 Input:  a
+At:  Q2 Input:  
+At:  Q1 Input:  
+No
+---
+At:  Q1 Input:  abab
+At:  Q2 Input:  bab
+At:  Q1 Input:  bab
+At:  Q3 Input:  ab
+At:  Q2 Input:  b
+At:  Q1 Input:  b
+At:  Q3 Input:  
+Yes
+---
+At:  Q1 Input:  ccac
+At:  Q4 Input:  cac
+At:  Q3 Input:  cac
+At:  Q3 Input:  ac
+At:  Q2 Input:  c
+At:  Q1 Input:  c
+At:  Q4 Input:  
+At:  Q3 Input:  
+No
+
+
+=== NFA test 2 ===
+At:  q1 Input:  baaca
+At:  q3 Input:  baaca
+At:  q2 Input:  aaca
+At:  q2 Input:  aca
+At:  q2 Input:  ca
+At:  q3 Input:  a
+At:  q1 Input:  
+At:  q3 Input:  
+Yes
+---
+At:  q1 Input:  bca
+At:  q3 Input:  bca
+At:  q2 Input:  ca
+At:  q3 Input:  a
+At:  q1 Input:  
+At:  q3 Input:  
+Yes
+---
+At:  q1 Input:  baac
+At:  q3 Input:  baac
+At:  q2 Input:  aac
+At:  q2 Input:  ac
+At:  q2 Input:  c
+At:  q3 Input:  
+Yes
+
+
+=== NFA conversion test 1 ===
+New DFA is:
+DFA: Name: temp
+Node: Q1
+'a' --> 'Q1Q2'
+'c' --> 'Q3Q4'
+Node: Q1Q2
+'a' --> 'Q1Q2'
+'b' --> 'Q3'
+'c' --> 'Q3Q4'
+Node: Q3Q4
+'a' --> 'Q1Q2'
+'c' --> 'Q3'
+Node: Q3
+'a' --> 'Q1Q2'
+Transitioning from Q1 to Q1Q2 using a
+Transitioning from Q1Q2 to Q1Q2 using a
+Transitioning from Q1Q2 to Q3 using b
+Yes
+---
+Transitioning from Q1 to Q1Q2 using a
+No
+---
+Transitioning from Q1 to Q3Q4 using c
+ERROR! Invalid transition detected at Q3Q4!
+Invalid character: b
+No
+
+
+=== NFA conversion test 2 ===
+New DFA is:
+DFA: Name: temp
+Node: q1
+'b' --> 'q2'
+Node: q2
+'a' --> 'q2'
+'c' --> 'q3'
+Node: q3
+'a' --> 'q1q3'
+Node: q1q3
+'a' --> 'q1q3'
+'b' --> 'q2'
+Transitioning from q1 to q2 using b
+Transitioning from q2 to q2 using a
+Transitioning from q2 to q2 using a
+Transitioning from q2 to q3 using c
+Transitioning from q3 to q1q3 using a
+Yes
+---
+Transitioning from q1 to q2 using b
+Transitioning from q2 to q3 using c
+Transitioning from q3 to q1q3 using a
+Yes
+---
+Transitioning from q1 to q2 using b
+Transitioning from q2 to q2 using a
+Transitioning from q2 to q2 using a
+Transitioning from q2 to q3 using c
+No

@@ -1,0 +1,129 @@
+Nicholas Wackowski
+3/31/2020
+Foundations DFA/NFA Project
+
+NOTE: Due to issues with my interpreter not recognizing the epsilon (∊) character, I instead used "$" to denoted "epsilon". $ == ∊
+NOTE: I have condensed all of my code into a single file (FoundationsProject.py) for ease of testing, as explained in README.txt. All line numbers referenced in this file refer to lines in FoundationsProject.py.
+
+======================================== How my code works ========================================
+I used an Object-Oriented approach.
+Each DFA/NFA takes in a set of states, and which state is the initial state.
+Each State contains information about itself, including transitions and whether or not it is a 'success' state.
+Each transition is an object which contains inputs and corresponding states to transition to.
+Then 'transition' function in a DFA is implemented recursively, transitioning along each character in an alphabet until there are no more characters to transition through, and returning the value of the final state ("yes" or "no").
+In an NFA, if it detects that there is a "$" (epsilon) transition on the current state, it will call another transition function, using the current alphabet, starting from the node at the end of that transition. The function will then return a set of all end states across all universes, and then if any of them are valid, it returns 'yes'. Otherwise, it returns 'no.'
+
+
+======================= How my object represents the definition of a DFA ========================
+Q: A DFA object is made up of a list of states, which represents the finite set of states.
+[Sigma]: The alphabet is defined in the transition function objects, and validation of input happens during run-time.
+S: Transition functions are defined as a part of each individual state.
+Q0: Initial state is given as a parameter of the transition function.
+F: Each state object in the state list contains information on whether or not it is an accepted state or not.
+
+
+======================================== Important Lines ========================================
+DFA object code: lines 7-88, transition function: lines 23-47.
+NFA object code: lines 129-360, transition function: lines 152-185, converter: lines 196-224.
+Validation tests (empty-states and multiple arrows): lines 485 - 497
+DFA tests: lines 502 - 567
+NFA tests: lines 570 - 607
+NFA conversion tests: lines 612 - 662
+allTests: lines 665 - 696
+allTests function call: line 698
+
+
+======================================== Explanation of Tests ========================================
+The output of the function call has been copy-pasted to OUTPUT.txt. I will now explain each test and result:
+
+DFA Validation tests:
+First passes in a DFA without any states. Prints "VALIDATION ERROR: No states found" and returns False.
+Then passes in a DFA where one state has multiple transitions for the same input. Prints "VALIDATION ERROR: multiple transitions in [state] with input [input]" and returns False.
+
+DFA test 1:
+See image 'DFA Diagrams.jpg'; test 1 uses the first (leftmost) DFA in that image. It has two states, and changes state every time there is an 'a' input. It could also be called a DFA which returns whether or not there is an even number of 'a's.
+Test 1: Alphabet: "aba" returns true.
+Test 2: Alphabet: "abbba" returns true.
+Test 3: Alphabet: "aaaab" returns true.
+
+DFA test 2:
+See image 'DFA Diagrams.jpg'; test 2 uses the second (middle) DFA in that image. It has 3 states, and transitions from one state to another depending on input, where 'a' always leads to "q1", 'b' always leads to "q2", and 'c' always leads to "q3". It could also be called a DFA which returns whether or not the final value of an alphabet is 'c'.
+Test 1: Alphabet: "abca" returns false.
+Test 2: Alphabet: "accbab" returns false.
+Test 3: Alphabet: "QQQ" returns an error! It detects an invalid input, reports the state/input, and returns false.
+
+DFA test 3:
+See image 'DFA Diagrams.jpg'; test 3 uses the first (rightmost) DFA in that image.
+This is a very complex DFA diagram, with many arrows spread across it. It returns True on states 2 and 4.
+Test 1: Alphabet: "abccd" returns false.
+Test 2: Alphabet: "cbdb" returns true.
+Test 3: Alphabet: "abcd" returns false.
+
+NFA test 1:
+See image 'NFA Diagrams 1.jpg'.
+Test 1: Alphabet: "caa" returns false.
+Test 2: Alphabet: "abab" returns true.
+Test 3: Alphabet: "ccac" returns false.
+
+NFA test 2:
+See image 'NFA Diagrams 2.jpg'
+Test 1: Alphabet: "baaca" returns true.
+Test 2: Alphabet: "bca" returns true.
+Test 3: Alphabet: "baac" returns true.
+
+NFA conversion 1:
+See image 'NFA Diagrams 1.jpg'.
+The conversion creates a diagram as follows:
+State: Q1
+'a' --> 'Q1Q2'
+'c' --> 'Q3Q4'
+State: Q1Q2
+'a' --> 'Q1Q2'
+'b' --> 'Q3'
+'c' --> 'Q3Q4'
+State: Q3Q4
+'a' --> 'Q1Q2'
+'c' --> 'Q3'
+State: Q3
+'a' --> 'Q1Q2'
+
+Test 1: Alphabet: "caa" returns false.
+Test 2: Alphabet: "abab" returns true.
+Test 3: Alphabet: "ccac" returns false.
+
+NFA conversion 2:
+See image 'NFA Diagrams 2.jpg'
+The conversion creates a diagram as follows:
+State: q1
+'b' --> 'q2'
+State: q2
+'a' --> 'q2'
+'c' --> 'q3'
+State: q3
+'a' --> 'q1q3'
+State: q1q3
+'a' --> 'q1q3'
+'b' --> 'q2'
+
+Test 1: Alphabet: "baaca" returns true.
+Test 2: Alphabet: "bca" returns true.
+Test 3: Alphabet: "baac" returns true.
+
+
+In order to create a new test function, define it as follows:
+def my_test():
+	# Define each node individually, passing in the name of the state, whether the state returns 'true' or 'false', and a list of transition functions:
+    Q1 = node("Q1", False, [transitionEquation('a', 'Q1'), transitionEquation('b', 'Q1'), transitionEquation('c', 'Q2'), transitionEquation('d', 'Q3')])
+    Q2 = node("Q2", True,  [transitionEquation('a', 'Q3'), transitionEquation('b', 'Q2'), transitionEquation('c', 'Q1'), transitionEquation('d', 'Q3')])
+    Q3 = node("Q3", False, [transitionEquation('a', 'Q4'), transitionEquation('b', 'Q4'), transitionEquation('c', 'Q3'), transitionEquation('d', 'Q4')])
+    Q4 = node("Q4", True,  [transitionEquation('a', 'Q1'), transitionEquation('b', 'Q4'), transitionEquation('c', 'Q1'), transitionEquation('d', 'Q4')])
+
+    # Then, create a list of all the nods you defined,
+    testNodeList = [Q1, Q2, Q3, Q4]
+
+    # And use the DFA constructor, passing in the name of your DFA and its list of nodes.
+    testDFA = DFA(name='testDFA', nodesList=testNodeList)
+
+    # Define your alphabet, and run your DFA's transition function, passing in the alphabet and the initial node. Print the results!
+    alphabet = 'abccd'
+    print(testDFA.transition(alphabet=alphabet, currentNode=Q1))
